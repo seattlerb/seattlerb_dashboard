@@ -1,0 +1,134 @@
+#!/usr/bin/env ruby -ws
+
+require 'rubygems'
+require 'tagz'
+
+$q ||= false
+$, = ', '
+
+total_passed = total_failed = 0
+projs     = %w( rubyforge hoe ZenTest miniunit RubyInline
+                ParseTree ruby_parser ruby2ruby heckle png
+                flog vlad )
+status    = Hash.new { |h,k| h[k] = Hash.new { |h2,k2| h2[k2] = "n/a" } }
+
+versions = Dir.chdir(File.expand_path("~/.multiruby/install")) { Dir["*"].sort }
+naming = versions.map { |n|
+  n.
+  sub(/^mri_rel_/, 'r').
+  sub(/^mri_/, 'b').
+  sub(/1_8_/, '').
+  sub(/1_8/, '8').
+  sub(/1_9/, '9').
+  sub(/trunk/, '9').
+  sub(/rubinius/, 'xx')
+}
+naming = Hash[*versions.zip(naming).flatten]
+
+raise "non-unique name: #{naming.inspect}" if
+  naming.values.uniq.size != naming.size
+raise "unknown version" if naming.keys.sort != versions.sort
+
+color = {
+  "failed" => "#F99",
+  "passed" => "#9F9",
+  "n/a" => "#ccc",
+}
+
+$stderr.print "Project: "; warn versions.flatten
+
+dir = ARGV.shift || File.expand_path("~/Sites/dashboard")
+
+Dir.mkdir dir unless File.exist? dir
+
+projs.each do |proj|
+  proj_dir = case proj
+        when /rubyforge/ then
+          File.expand_path("~/Work/svn/codeforpeople/rubyforge/trunk")
+        else
+          "#{proj}/dev"
+        end
+
+  ENV['VERSIONS'] = versions.join(':')
+
+  run = Dir.chdir proj_dir do
+    `rake -q clean multi 2>&1`
+  end
+
+  File.open "#{dir}/#{proj}.txt", 'w' do |f|
+    f.write run
+  end
+
+  passed = run[/^Passed: .*/]
+  failed = run[/^Failed: .*/]
+
+  passed.split(/[:,] /)[1..-1].each do |version|
+    status[proj][version] = true
+    total_passed += 1
+  end unless passed.nil?
+
+  failed.split(/[:,] /)[1..-1].each do |version|
+    status[proj][version] = false
+    total_failed += 1
+  end unless failed.nil?
+
+  results = status[proj]
+
+  $stderr.print "#{proj}: "; warn versions.map { |version| results[version] }
+
+  exit 1 if failed && $q 
+end
+
+warn ""
+warn "passed: #{total_passed} failed: #{total_failed}"
+
+File.open "#{dir}/index.html", 'w' do |f|
+  f.puts Tagz {
+    tagz << %(<!D\OCTYPE html PUBLIC "-//W3C//DTD HTML 3.2//EN">)
+    html_ {
+      head_ {
+        title_ { "Project Status Report" }
+        style_(:type=>"text/css") {
+          tagz << "*      { padding: 0; margin: 0; }"
+          tagz << "table  { margin: 0 auto; padding: 0; border-spacing: 0; }"
+          tagz << "th, td { text-align: right; font-size:0.7em;}"
+          tagz << "th     { font-weight: normal; }"
+        }
+      }
+      body_ {
+        table_ {
+          tr_ {
+            th_ { "&nbsp;" }
+            versions.each do |v|
+              th_ { naming[v] }
+            end
+          }
+          projs.each do |proj|
+            results = status[proj]
+            tr_ {
+              th_ {
+                a_(proj, :href => "#{proj}.txt")
+              }
+              versions.each do |version|
+                r = results[version] || "failed"
+                r = "passed" if r == true
+                td_("", :style => "background: #{color[r]}")
+              end
+            }
+          end
+
+          naming.sort.each do |orig, short|
+            tr_ {
+              th_(short)
+              td_(orig, :colspan => 5)
+            }
+          end
+
+          tr_ {
+            td_(Time.now.strftime("%Y-%m-%d %H:%M"), :colspan => 6)
+          }
+        }
+      }
+    }
+  }
+end

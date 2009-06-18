@@ -1,0 +1,7 @@
+History.txt
+Manifest.txt
+README.txt
+Rakefile
+bin/seattlerb_dashboard
+lib/seattlerb_dashboard.rb
+test/test_seattlerb_dashboard.rb
