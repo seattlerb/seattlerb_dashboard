@@ -2,28 +2,28 @@
 
 require 'rubygems'
 require 'tagz'
+require 'seattlerb_projects'
 
-$q ||= false
-$, = ', '
+old_comma, $, = $,, ', '
+
+def check_project project
+  Dir.chdir project do
+    ver = Dir["[0-9]*"].sort_by { |name| name.split(/\./).map { |n| n.to_i } }
+    if ver.empty? then
+      nil
+    else
+      ! system "diff -rq #{ver.last} dev | grep -q differ$"
+    end
+  end
+end
 
 total_passed = total_failed = 0
-projs     = %w( rubyforge hoe ZenTest miniunit RubyInline
-                ParseTree ruby_parser ruby2ruby heckle png
-                flog vlad )
-status    = Hash.new { |h,k| h[k] = Hash.new { |h2,k2| h2[k2] = "n/a" } }
 
+projs    = SeattlerbProjects.new.projects.flatten
+status   = Hash.new { |h,k| h[k] = Hash.new { |h2,k2| h2[k2] = "n/a" } }
 versions = Dir.chdir(File.expand_path("~/.multiruby/install")) { Dir["*"].sort }
-naming = versions.map { |n|
-  n.
-  sub(/^mri_rel_/, 'r').
-  sub(/^mri_/, 'b').
-  sub(/1_8_/, '').
-  sub(/1_8/, '8').
-  sub(/1_9/, '9').
-  sub(/trunk/, '9').
-  sub(/rubinius/, 'xx')
-}
-naming = Hash[*versions.zip(naming).flatten]
+naming   = versions.map { |n| n.sub(/rubinius/, 'xx') }
+naming   = Hash[*versions.zip(naming).flatten]
 
 raise "non-unique name: #{naming.inspect}" if
   naming.values.uniq.size != naming.size
@@ -35,13 +35,17 @@ color = {
   "n/a" => "#ccc",
 }
 
-$stderr.print "Project: "; warn versions.flatten
+puts "Project: #{versions.flatten}"
 
 dir = ARGV.shift || File.expand_path("~/Sites/dashboard")
 
 Dir.mkdir dir unless File.exist? dir
 
+format = "%-#{projs.map { |s| s.size }.max}s : %s : %s"
+
 projs.each do |proj|
+  next if proj =~ /rubyforge/ # HACK
+
   proj_dir = case proj
         when /rubyforge/ then
           File.expand_path("~/Work/svn/codeforpeople/rubyforge/trunk")
@@ -74,17 +78,27 @@ projs.each do |proj|
 
   results = status[proj]
 
-  $stderr.print "#{proj}: "; warn versions.map { |version| results[version] }
+  row = versions.map { |version| results[version] ? "T" : "F" }
 
-  exit 1 if failed && $q 
+  up_to_date = check_project(proj)
+
+  release_status = {
+    nil   => "never released",
+    true  => "up-to-date",
+    false => "needs release",
+  }[up_to_date]
+
+  puts format % [proj, row, release_status]
 end
 
-warn ""
-warn "passed: #{total_passed} failed: #{total_failed}"
+puts
+puts "passed: #{total_passed} failed: #{total_failed}"
+
+$, = old_comma
 
 File.open "#{dir}/index.html", 'w' do |f|
   f.puts Tagz {
-    tagz << %(<!D\OCTYPE html PUBLIC "-//W3C//DTD HTML 3.2//EN">)
+    tagz.puts %(<!D\OCTYPE html PUBLIC "-//W3C//DTD HTML 3.2//EN">)
     html_ {
       head_ {
         title_ { "Project Status Report" }
@@ -98,7 +112,7 @@ File.open "#{dir}/index.html", 'w' do |f|
       body_ {
         table_ {
           tr_ {
-            th_ { "&nbsp;" }
+            th_ { tagz.concat "&nbsp;" }
             versions.each do |v|
               th_ { naming[v] }
             end
