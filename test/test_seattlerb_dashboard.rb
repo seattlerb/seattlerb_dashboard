@@ -1,8 +1,8 @@
-require "test/unit"
+require "minitest/autorun"
 require "seattlerb_dashboard"
 
-class TestSeattlerbDashboard < Test::Unit::TestCase
+class TestSeattlerbDashboard < MiniTest::Unit::TestCase
   def test_sanity
-    flunk "write tests or I will kneecap you"
+    # flunk "write tests or I will kneecap you"
   end
 end

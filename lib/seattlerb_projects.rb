@@ -1,7 +1,14 @@
 
 class SeattlerbProjects
 
+  def chdir_src
+    src_dir = File.expand_path("~/Work/p4/zss/src")
+    Dir.chdir src_dir
+  end
+
   def projects
+    chdir_src
+
     layers = [ # mix of dependencies and priorities
 
               # most important: the foundation
@@ -41,9 +48,12 @@ class SeattlerbProjects
     hold += layers.flatten
 
     # grab everything else we've missed and add them
-    layers << Dir["*"].find_all { |d|
-      d !~ /^\./ and File.directory?(d) and not hold.include? d
-    }.sort_by { |d| -File.mtime(d).to_i }
+    src_dir = File.expand_path("~/Work/p4/zss/src")
+    Dir.chdir src_dir do
+      layers << Dir["*"].find_all { |d|
+        d !~ /^\./ and File.directory?(d) and not hold.include? d
+      }.sort_by { |d| -File.mtime(d).to_i }
+    end
 
     layers
   end
