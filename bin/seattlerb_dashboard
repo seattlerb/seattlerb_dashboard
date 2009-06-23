@@ -37,6 +37,7 @@ color = {
 
 code = {
   "n/a" => "o",
+  nil   => "o",
   true  => "T",
   false => "F",
 }
@@ -49,12 +50,14 @@ Dir.mkdir dir unless File.exist? dir
 
 format = "%-#{projs.map { |s| s.size }.max}s : %s : %s"
 
+$cache_stale = false
 def cache_against_dir_mtimes cache_path, dir
   Dir.chdir dir do
     cache_mtime = File.mtime(cache_path) rescue Time.at(0)
     dir_mtime = Dir["**"].map { |f| File.mtime f if File.exist? f }.compact.max
 
-    if cache_mtime < dir_mtime then
+    if $cache_stale || cache_mtime < dir_mtime then
+      $cache_stale = true
       data = yield
 
       File.open cache_path, 'w' do |f|
@@ -101,15 +104,9 @@ projs.each do |proj|
 
   row = versions.map { |version| code[results[version]] }
 
-  up_to_date = check_project(proj)
+  up_to_date = code[check_project(proj)]
 
-  release_status = {
-    nil   => "never released",
-    true  => "up-to-date",
-    false => "needs release",
-  }[up_to_date]
-
-  puts format % [proj, row, release_status]
+  puts format % [proj, up_to_date, row]
 end
 
 puts
@@ -143,7 +140,13 @@ File.open "#{dir}/index.html", 'w' do |f|
       body_ {
         table_ {
           tr_(:id => :top) {
-            th_ { tagz.concat "&nbsp;" }
+            td_ {
+              table_(:style => "border: 1px solid black; padding: 2px;") {
+                tr_ { td_ "Packages:"; td_ projs.size }
+                tr_ { td_ "Releases:"; td_ Dir["*/[0-9]*"].size }
+                tr_ { td_ "Commits:";  td_ `p4 counter change` }
+              }
+            }
             th_ { tagz.concat "&nbsp;" }
             th_ { div_ "released?", :class => :rot }
             th_ { tagz.concat "&nbsp;" }

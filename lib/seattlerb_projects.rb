@@ -25,7 +25,7 @@ class SeattlerbProjects
               %w(image_science png),
 
               # toys and soon to be more "serious"
-              %w(ar_mailer imap_processor gmail_contacts imap_to_rss),
+              %w(imap_processor gmail_contacts imap_to_rss),
               %w(UPnP-ConnectionManager UPnP-MediaServer),
               %w(rails_analyzer_tools production_log_analyzer),
               %w(graph ZenWeb ZenGraph),
@@ -42,7 +42,7 @@ class SeattlerbProjects
             drawr ograph ZenLibrary box_layout bfts rc-rest
             RailsRemoteControl yaccpuke ruby2smalltalk
             RubyInlineFortran ZenHacks zero2rails weight pkg_clean
-            cocor
+            cocor ar_mailer
             ".scan(/\S+/)
 
     hold += layers.flatten
@@ -54,6 +54,8 @@ class SeattlerbProjects
         d !~ /^\./ and File.directory?(d) and not hold.include? d
       }.sort_by { |d| -File.mtime(d).to_i }
     end
+
+    layers.last << layers.last.delete("seattlerb_dashboard")
 
     layers
   end
