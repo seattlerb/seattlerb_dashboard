@@ -103,18 +103,17 @@ end
 css = <<-EOM
 *         { padding: 0; margin: 0; }
 table     { margin: 0 auto; padding: 0; border-spacing: 0; }
-th, td    { text-align: right; width: 1em;}
+th, td    { text-align: right; font-size:0.7em; width: 1em;}
 th        { font-weight: normal; }
 p         { text-align: center; }
-tr#top th { vertical-align: bottom; text-align: left;
-                               height: 13em; }
-.rot      { -webkit-transform: rotate(-90deg);
-                               -webkit-transform-origin: bottom;
-                               position:absolute;
-                               margin-top: -12em;
-                               margin-left: -11.75em;
-                               width: 25em;
-                               line-height: 0em; }
+tr#top th { vertical-align: bottom; text-align: left; height: 7em; }
+.rot      { -webkit-transform: rotate(-90deg); -moz-transform: rotate(-90deg);
+            -webkit-transform-origin: bottom;  -moz-transform-origin: bottom;
+            position:absolute;
+            margin-top: -6em;
+            margin-left: -4em;
+            width: 10em;
+            line-height: 0em; }
 EOM
 
 puts
@@ -129,20 +128,7 @@ File.open "#{dir}/index.html", 'w' do |f|
       head_ {
         title_ { "Project Status Report #{Time.now.strftime("%Y-%m-%d %H:%M")}"}
         style_(:type=>"text/css") {
-          tagz << "*         { padding: 0; margin: 0; }"
-          tagz << "table     { margin: 0 auto; padding: 0; border-spacing: 0; }"
-          tagz << "th, td    { text-align: right; font-size:0.7em; width: 1em;}"
-          tagz << "th        { font-weight: normal; }"
-          tagz << "p         { text-align: center; }"
-          tagz << "tr#top th { vertical-align: bottom; text-align: left;
-                               height: 7em; }"
-          tagz << ".rot      { -webkit-transform: rotate(-90deg);
-                               -webkit-transform-origin: bottom;
-                               position:absolute;
-                               margin-top: -6em;
-                               margin-left: -4em;
-                               width: 10em;
-                               line-height: 0em; }"
+          tagz << css
         }
       }
       body_ {
@@ -176,63 +162,6 @@ File.open "#{dir}/index.html", 'w' do |f|
               td_ { tagz.concat "&nbsp;" }
 
               versions.each do |version|
-                r = results[version] || "failed"
-                r = "passed" if r == true
-                td_("", :style => "background: #{color[r]}")
-              end
-            }
-          end
-        }
-      }
-    }
-  }
-end
-
-File.open "#{dir}/index2.html", 'w' do |f|
-  f.puts Tagz {
-    tagz.puts %(<!D\OCTYPE html PUBLIC "-//W3C//DTD HTML 3.2//EN">)
-    html_ {
-      head_ {
-        title_ { "Project Status Report #{Time.now.strftime("%Y-%m-%d %H:%M")}"}
-        style_(:type=>"text/css") {
-          tagz << css
-        }
-      }
-      body_ {
-        table_ {
-          tr_(:id => :top) {
-            td_ {
-              table_(:style => "border: 1px solid black; padding: 2px;") {
-                tr_ { td_ "Packages:"; td_ projs.size }
-                tr_ { td_ "Releases:"; td_ Dir["*/[0-9]*"].size }
-                tr_ { td_ "Commits:";  td_ `p4 counter change` }
-              }
-            }
-            projs.each do |proj|
-              th_ {
-                div_(:class => :rot) {
-                  a_ proj, :href => "#{proj}.txt"
-                }
-              }
-            end
-          }
-
-          tr_ { th_ { tagz.concat "&nbsp;" } }
-
-          tr_ {
-            th_ { div_ "released?" }
-            projs.each do |proj|
-              td_("", :style => "background: #{color[up_to_date[proj]]}")
-            end
-          }
-
-          tr_ { th_ { tagz.concat "&nbsp;" } }
-
-          versions.each do |version|
-            tr_ {
-              th_ version
-              projs.each do |proj|
-                results = status[proj]
                 r = results[version] || "failed"
                 r = "passed" if r == true
                 td_("", :style => "background: #{color[r]}")
