@@ -6,17 +6,6 @@ require 'seattlerb_projects'
 
 old_comma, $, = $,, ', '
 
-def check_project project
-  Dir.chdir project do
-    ver = Dir["[0-9]*"].sort_by { |name| name.split(/\./).map { |n| n.to_i } }
-    if ver.empty? then
-      nil
-    else
-      ! system "diff -rq #{ver.last} dev | grep -q differ$"
-    end
-  end
-end
-
 total_passed = total_failed = 0
 
 seattlerb = SeattlerbProjects.new
@@ -41,6 +30,8 @@ code = {
   true  => "T",
   false => "F",
 }
+
+up_to_date = {}
 
 puts "Project: #{versions.flatten}"
 
@@ -104,10 +95,27 @@ projs.each do |proj|
 
   row = versions.map { |version| code[results[version]] }
 
-  up_to_date = code[check_project(proj)]
+  up_to_date[proj] = seattlerb.check_project(proj)
 
-  puts format % [proj, up_to_date, row]
+  puts format % [proj, code[up_to_date[proj]], row]
 end
+
+css = <<-EOM
+*         { padding: 0; margin: 0; }
+table     { margin: 0 auto; padding: 0; border-spacing: 0; }
+th, td    { text-align: right; width: 1em;}
+th        { font-weight: normal; }
+p         { text-align: center; }
+tr#top th { vertical-align: bottom; text-align: left;
+                               height: 13em; }
+.rot      { -webkit-transform: rotate(-90deg);
+                               -webkit-transform-origin: bottom;
+                               position:absolute;
+                               margin-top: -12em;
+                               margin-left: -11.75em;
+                               width: 25em;
+                               line-height: 0em; }
+EOM
 
 puts
 puts "passed: #{total_passed} failed: #{total_failed}"
@@ -163,12 +171,68 @@ File.open "#{dir}/index.html", 'w' do |f|
 
               td_ { tagz.concat "&nbsp;" }
 
-              up_to_date = check_project(proj)
-              td_("", :style => "background: #{color[up_to_date]}")
+              td_("", :style => "background: #{color[up_to_date[proj]]}")
 
               td_ { tagz.concat "&nbsp;" }
 
               versions.each do |version|
+                r = results[version] || "failed"
+                r = "passed" if r == true
+                td_("", :style => "background: #{color[r]}")
+              end
+            }
+          end
+        }
+      }
+    }
+  }
+end
+
+File.open "#{dir}/index2.html", 'w' do |f|
+  f.puts Tagz {
+    tagz.puts %(<!D\OCTYPE html PUBLIC "-//W3C//DTD HTML 3.2//EN">)
+    html_ {
+      head_ {
+        title_ { "Project Status Report #{Time.now.strftime("%Y-%m-%d %H:%M")}"}
+        style_(:type=>"text/css") {
+          tagz << css
+        }
+      }
+      body_ {
+        table_ {
+          tr_(:id => :top) {
+            td_ {
+              table_(:style => "border: 1px solid black; padding: 2px;") {
+                tr_ { td_ "Packages:"; td_ projs.size }
+                tr_ { td_ "Releases:"; td_ Dir["*/[0-9]*"].size }
+                tr_ { td_ "Commits:";  td_ `p4 counter change` }
+              }
+            }
+            projs.each do |proj|
+              th_ {
+                div_(:class => :rot) {
+                  a_ proj, :href => "#{proj}.txt"
+                }
+              }
+            end
+          }
+
+          tr_ { th_ { tagz.concat "&nbsp;" } }
+
+          tr_ {
+            th_ { div_ "released?" }
+            projs.each do |proj|
+              td_("", :style => "background: #{color[up_to_date[proj]]}")
+            end
+          }
+
+          tr_ { th_ { tagz.concat "&nbsp;" } }
+
+          versions.each do |version|
+            tr_ {
+              th_ version
+              projs.each do |proj|
+                results = status[proj]
                 r = results[version] || "failed"
                 r = "passed" if r == true
                 td_("", :style => "background: #{color[r]}")

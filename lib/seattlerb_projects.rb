@@ -1,6 +1,51 @@
 
 class SeattlerbProjects
 
+  ##
+  # Returns nil if unreleased, false if the latest release is out of
+  # date, true otherwise.
+
+  def check_project project
+    Dir.chdir project do
+      ver = Dir["[0-9]*"].sort_by { |name| name.split(/\./).map { |n| n.to_i } }
+      if ver.empty? then
+        nil
+      else
+        ! system "diff -rq #{ver.last} dev | grep -q differ$"
+      end
+    end
+  end
+
+  def latest_version project
+    Dir.chdir project do
+      Dir["[0-9]*"].sort_by { |name| name.split(/\./).map { |n| n.to_i } }.last
+    end
+  end
+
+  def current_version project
+    version = nil
+
+    Dir.chdir "#{project}/dev" do
+      files = File.read("Manifest.txt").split(/\n/)
+      files.each do |file|
+        begin
+          version = File.read(file)[/VERSION = ([\"\'])([\d][\d\w\.]+)\1/, 2]
+          break if version
+        rescue
+          # ignore it
+        end
+      end
+    end
+
+    version
+  end
+
+  def history_version project
+    Dir.chdir "#{project}/dev" do
+      File.read("History.txt").split(/\n/).first[/[\d\.]+/]
+    end
+  end
+
   def chdir_src
     src_dir = File.expand_path("~/Work/p4/zss/src")
     Dir.chdir src_dir

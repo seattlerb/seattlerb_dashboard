@@ -1,0 +1,29 @@
+#!/usr/bin/env ruby -ws
+
+$: << 'seattlerb_dashboard/dev/lib'
+require 'seattlerb_projects'
+
+seattlerb = SeattlerbProjects.new
+projs     = seattlerb.projects.flatten
+seattlerb.chdir_src
+
+up_to_date = {}
+projs.each do |proj|
+  up_to_date = seattlerb.check_project(proj)
+
+  unless up_to_date then
+    latest_release  = seattlerb.latest_version(proj)
+    current_version = seattlerb.current_version(proj)
+    if latest_release.nil? then
+      puts "#{proj} is unreleased"
+    elsif latest_release == current_version then
+      puts "#{proj} needs updated version from #{latest_release}"
+    else
+      history_version = seattlerb.history_version proj
+      if history_version != current_version then
+        puts "#{proj} needs History.txt updated for v#{current_version}"
+      end
+    end
+  end
+end
+
