@@ -1,5 +1,7 @@
 #!/usr/bin/env ruby -ws
 
+$f ||= false
+
 require 'rubygems'
 require 'tagz'
 require 'seattlerb_projects'
@@ -19,7 +21,7 @@ color = {
   "passed" => "#9F9",
   true     => "#9F9",
   "failed" => "#F99",
-  false    => "#F99",
+  false    => "#66F",
   "n/a"    => "#ccc",
   nil      => "#ccc",
 }
@@ -48,7 +50,7 @@ def cache_against_dir_mtimes cache_path, dir
     dir_mtime = Dir["**"].map { |f| File.mtime f if File.exist? f }.compact.max
 
     if $cache_stale || cache_mtime < dir_mtime then
-      $cache_stale = true
+      $cache_stale = !$f
       data = yield
 
       File.open cache_path, 'w' do |f|
