@@ -108,5 +108,13 @@ end
 
 if $0 == __FILE__ then
   require 'pp'
-  pp SeattlerbProjects.new.projects
+  $l ||= false
+  if $l then
+    print "'("
+    print SeattlerbProjects.new.projects.flatten.inspect.gsub(/,/, '')[1..-2]
+    print ")"
+    puts
+  else
+    pp SeattlerbProjects.new.projects
+  end
 end
