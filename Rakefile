@@ -17,6 +17,7 @@ task :sync do
   Dir.chdir File.expand_path("~/Sites") do
     sh "./sync.sh"
   end
+  sh "open http://www.zenspider.com/~ryand/dashboard/"
 end
 
 # vim: syntax=ruby
