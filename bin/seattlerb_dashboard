@@ -65,10 +65,10 @@ def cache_against_dir_mtimes cache_path, dir
 end
 
 projs.each do |proj|
-  next if proj =~ /rubyforge/ # HACK
+  next if proj =~ /^rubyforge/ # HACK
 
   proj_dir = case proj
-        when /rubyforge/ then
+        when /^rubyforge/ then
           File.expand_path("~/Work/svn/codeforpeople/rubyforge/trunk")
         else
           "#{proj}/dev"
