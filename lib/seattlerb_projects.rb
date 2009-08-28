@@ -70,7 +70,6 @@ class SeattlerbProjects
               %w(image_science png),
 
               # toys and soon to be more "serious"
-              %w(imap_processor gmail_contacts imap_to_rss),
               %w(UPnP-ConnectionManager UPnP-MediaServer),
               %w(rails_analyzer_tools production_log_analyzer),
               %w(graph ZenWeb ZenGraph),
@@ -88,7 +87,9 @@ class SeattlerbProjects
             RailsRemoteControl yaccpuke ruby2smalltalk
             RubyInlineFortran ZenHacks zero2rails weight pkg_clean
             cocor ar_mailer
-            ".scan(/\S+/)
+            # if you won't write tests others can run, they won't get run.
+            imap_processor gmail_contacts imap_to_rss
+            ".gsub(/\s*\#.*/, '').scan(/\S+/)
 
     hold += layers.flatten
 
