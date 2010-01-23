@@ -25,7 +25,10 @@ class SeattlerbProjects
   def current_version project
     version = nil
 
-    Dir.chdir "#{project}/dev" do
+    dir = "#{project}/dev"
+    return unless File.directory? dir
+
+    Dir.chdir dir do
       files = File.read("Manifest.txt").split(/\n/)
       files.each do |file|
         begin
@@ -86,7 +89,9 @@ class SeattlerbProjects
             drawr ograph ZenLibrary box_layout bfts rc-rest
             RailsRemoteControl yaccpuke ruby2smalltalk
             RubyInlineFortran ZenHacks zero2rails weight pkg_clean
-            cocor ar_mailer
+            cocor ar_mailer Cocoa
+            # can't get the tests to behave well
+            osx_keychain
             # if you won't write tests others can run, they won't get run.
             imap_processor gmail_contacts imap_to_rss
             ".gsub(/\s*\#.*/, '').scan(/\S+/)
@@ -107,15 +112,3 @@ class SeattlerbProjects
   end
 end
 
-if $0 == __FILE__ then
-  require 'pp'
-  $l ||= false
-  if $l then
-    print "'("
-    print SeattlerbProjects.new.projects.flatten.inspect.gsub(/,/, '')[1..-2]
-    print ")"
-    puts
-  else
-    pp SeattlerbProjects.new.projects
-  end
-end

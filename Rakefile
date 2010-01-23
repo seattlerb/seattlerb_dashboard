@@ -20,4 +20,10 @@ task :sync do
   sh "open http://www.zenspider.com/~ryand/dashboard/"
 end
 
+task :purge do
+  Dir.chdir File.expand_path("~/Sites/dashboard") do
+    rm Dir["*.txt"]
+  end
+end
+
 # vim: syntax=ruby

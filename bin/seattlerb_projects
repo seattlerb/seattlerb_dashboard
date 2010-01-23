@@ -1,0 +1,22 @@
+#!/usr/bin/env ruby -ws
+
+require 'seattlerb_projects'
+
+# seattlerb = SeattlerbProjects.new
+# projs     = seattlerb.projects.flatten
+# seattlerb.chdir_src
+
+# up_to_date = {}
+
+if $0 == __FILE__ then
+  require 'pp'
+  $l ||= false
+  if $l then
+    print "%w("
+    print SeattlerbProjects.new.projects.flatten.inspect.gsub(/,|"/, '')[1..-2]
+    print ")"
+    puts
+  else
+    pp SeattlerbProjects.new.projects
+  end
+end

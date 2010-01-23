@@ -1,7 +1,11 @@
+.autotest
 History.txt
 Manifest.txt
 README.txt
 Rakefile
+bin/check_versions
 bin/seattlerb_dashboard
+bin/seattlerb_projects
 lib/seattlerb_dashboard.rb
+lib/seattlerb_projects.rb
 test/test_seattlerb_dashboard.rb
