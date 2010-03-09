@@ -90,8 +90,6 @@ class SeattlerbProjects
             RailsRemoteControl yaccpuke ruby2smalltalk
             RubyInlineFortran ZenHacks zero2rails weight pkg_clean
             cocor ar_mailer Cocoa
-            # can't get the tests to behave well
-            osx_keychain
             # if you won't write tests others can run, they won't get run.
             imap_processor gmail_contacts imap_to_rss
             ".gsub(/\s*\#.*/, '').scan(/\S+/)
