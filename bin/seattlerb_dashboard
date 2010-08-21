@@ -4,6 +4,7 @@ $v ||= false
 $f ||= false
 
 require 'rubygems'
+require 'yaml'
 require 'tagz'
 require 'seattlerb_projects'
 
@@ -15,6 +16,8 @@ seattlerb = SeattlerbProjects.new
 projs     = seattlerb.projects.flatten
 status    = Hash.new { |h,k| h[k] = Hash.new { |h2,k2| h2[k2] = "n/a" } }
 versions  = Dir.chdir(File.expand_path("~/.multiruby/install")) { Dir["*"].sort}
+flog = {}
+flay = {}
 
 seattlerb.chdir_src
 
@@ -42,7 +45,7 @@ dir = ARGV.shift || File.expand_path("~/Sites/dashboard")
 
 Dir.mkdir dir unless File.exist? dir
 
-format = "%-#{projs.map { |s| s.size }.max}s : %s : %s"
+format = "%-#{projs.map { |s| s.size }.max}s : %s : %s : %8.2f : %8.2f"
 
 $cache_stale = false
 def cache_against_dir_mtimes cache_path, dir
@@ -56,12 +59,12 @@ def cache_against_dir_mtimes cache_path, dir
       data = yield
 
       File.open cache_path, 'w' do |f|
-        f.write data
+        YAML.dump data, f
       end
 
       data
     else
-      File.read cache_path
+      YAML.load_file cache_path
     end
   end
 end
@@ -81,10 +84,17 @@ projs.each do |proj|
 
   ENV['VERSIONS'] = versions.join(':')
 
-  run = cache_against_dir_mtimes "#{dir}/#{proj}.txt", proj_dir do
-    `rake -q clean multi 2>&1`
+  data = cache_against_dir_mtimes "#{dir}/#{proj}.yaml", proj_dir do
+    dirs = Dir["{lib,test}"].join(" ")
+    dirs = "." if dirs.empty?
+    {
+      :flog => `flog -s #{dirs} | head -1`[/\d+(\.\d+)?/].to_f,
+      :flay => `flay -s #{dirs} | head -1`[/\d+(\.\d+)?/].to_f,
+      :test => `rake -q clean multi 2>&1`,
+    }
   end
 
+  run = data[:test]
   passed = run[/^Passed: .*/]
   failed = run[/^Failed: .*/]
 
@@ -103,8 +113,10 @@ projs.each do |proj|
   row = versions.map { |version| code[results[version]] }
 
   up_to_date[proj] = seattlerb.check_project(proj)
+  results[:flog] = data[:flog] == 0 ? nil : data[:flog]
+  results[:flay] = data[:flay] == 0 ? nil : data[:flay]
 
-  puts format % [proj, code[up_to_date[proj]], row]
+  puts format % [proj, code[up_to_date[proj]], row, data[:flog], data[:flay]]
 end
 
 css = <<-EOM
@@ -154,6 +166,10 @@ File.open "#{dir}/index.html", 'w' do |f|
             versions.each do |v|
               th_ { div_ v, :class => :rot }
             end
+            th_ { tagz.concat "&nbsp;" }
+            th_ { div_ "flog", :class => :rot }
+            th_ { tagz.concat "&nbsp;" }
+            th_ { div_ "flay", :class => :rot }
           }
           projs.each do |proj|
             results = status[proj]
@@ -173,6 +189,11 @@ File.open "#{dir}/index.html", 'w' do |f|
                 r = "passed" if r == true
                 td_("", :style => "background: #{color[r]}")
               end
+
+              td_ { tagz.concat "&nbsp;" }
+              td_ { "%.2f" % results[:flog] if results[:flog] }
+              td_ { tagz.concat "&nbsp;" }
+              td_ { "%.2f" % results[:flay] if results[:flay] }
             }
           end
         }

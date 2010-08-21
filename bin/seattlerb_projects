@@ -1,5 +1,6 @@
 #!/usr/bin/env ruby -ws
 
+$: << "lib"
 require 'seattlerb_projects'
 
 # seattlerb = SeattlerbProjects.new

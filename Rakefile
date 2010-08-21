@@ -10,6 +10,10 @@ Hoe.spec 'seattlerb_dashboard' do
 end
 
 task :run do
+  ruby "-Ilib bin/seattlerb_dashboard -f"
+end
+
+task :full do
   ruby "-Ilib bin/seattlerb_dashboard"
 end
 
@@ -22,7 +26,7 @@ end
 
 task :purge do
   Dir.chdir File.expand_path("~/Sites/dashboard") do
-    rm Dir["*.txt"]
+    rm Dir["*.{txt,yaml}"]
   end
 end
 
