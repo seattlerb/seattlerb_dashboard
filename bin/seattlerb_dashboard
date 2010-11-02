@@ -88,9 +88,9 @@ projs.each do |proj|
     dirs = Dir["{lib,test}"].join(" ")
     dirs = "." if dirs.empty?
     {
+      :test => `rake -q clean multi 2>&1`,
       :flog => `flog -s #{dirs} | head -1`[/\d+(\.\d+)?/].to_f,
       :flay => `flay -s #{dirs} | head -1`[/\d+(\.\d+)?/].to_f,
-      :test => `rake -q clean multi 2>&1`,
     }
   end
 
@@ -121,7 +121,7 @@ end
 
 css = <<-EOM
 *         { padding: 0; margin: 0; }
-table     { margin: 0 auto; padding: 0; border-spacing: 0; }
+table     { margin: 1em auto; padding: 0; border-spacing: 0; }
 th, td    { text-align: right; font-size:0.7em; width: 1em;}
 th        { font-weight: normal; }
 p         { text-align: center; }
