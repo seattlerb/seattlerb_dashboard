@@ -5,7 +5,7 @@ $f ||= false
 
 require 'rubygems'
 require 'yaml'
-require 'tagz'
+require 'erector'
 require 'seattlerb_projects'
 
 old_comma, $, = $,, ', '
@@ -140,60 +140,60 @@ puts "passed: #{total_passed} failed: #{total_failed}"
 
 $, = old_comma
 
+include Erector::Mixin
+
 File.open "#{dir}/index.html", 'w' do |f|
-  f.puts Tagz {
-    tagz.puts %(<!D\OCTYPE html PUBLIC "-//W3C//DTD HTML 3.2//EN">)
-    html_ {
-      head_ {
-        title_ { "Project Status Report #{Time.now.strftime("%Y-%m-%d %H:%M")}"}
-        style_(:type=>"text/css") {
-          tagz << css
-        }
+  f.puts erector(:prettyprint => true) {
+    raw %(<!D\OCTYPE html PUBLIC "-//W3C//DTD HTML 3.2//EN">)
+    html {
+      head {
+        title { "Project Status Report #{Time.now.strftime("%Y-%m-%d %H:%M")}"}
+        style raw(css), :type=>"text/css"
       }
-      body_ {
-        table_ {
-          tr_(:id => :top) {
-            td_ {
-              table_(:style => "border: 1px solid black; padding: 2px;") {
-                tr_ { td_ "Packages:"; td_ projs.size }
-                tr_ { td_ "Releases:"; td_ Dir["*/[0-9]*"].size }
-                tr_ { td_ "Commits:";  td_ `p4 counter change` }
+      body {
+        table {
+          tr(:id => :top) {
+            td {
+              table(:style => "border: 1px solid black; padding: 2px;") {
+                tr { td "Packages:"; td projs.size }
+                tr { td "Releases:"; td Dir["*/[0-9]*"].size }
+                tr { td "Commits:";  td `p4 counter change` }
               }
             }
-            th_ { tagz.concat "&nbsp;" }
-            th_ { div_ "released?", :class => :rot }
-            th_ { tagz.concat "&nbsp;" }
+            th nbsp
+            th { div "released\?", :class => :rot }
+            th nbsp
             versions.each do |v|
-              th_ { div_ v, :class => :rot }
+              th { div v, :class => :rot }
             end
-            th_ { tagz.concat "&nbsp;" }
-            th_ { div_ "flog", :class => :rot }
-            th_ { tagz.concat "&nbsp;" }
-            th_ { div_ "flay", :class => :rot }
+            th nbsp
+            th { div "flog", :class => :rot }
+            th nbsp
+            th { div "flay", :class => :rot }
           }
           projs.each do |proj|
             results = status[proj]
-            tr_ {
-              th_ {
-                a_(proj, :href => "#{proj}.txt")
+            tr {
+              th {
+                a(proj, :href => "#{proj}.txt")
               }
 
-              td_ { tagz.concat "&nbsp;" }
+              td nbsp
 
-              td_("", :style => "background: #{color[up_to_date[proj]]}")
+              td("", :style => "background: #{color[up_to_date[proj]]}")
 
-              td_ { tagz.concat "&nbsp;" }
+              td nbsp
 
               versions.each do |version|
                 r = results[version] || "failed"
                 r = "passed" if r == true
-                td_("", :style => "background: #{color[r]}")
+                td("", :style => "background: #{color[r]}")
               end
 
-              td_ { tagz.concat "&nbsp;" }
-              td_ { "%.2f" % results[:flog] if results[:flog] }
-              td_ { tagz.concat "&nbsp;" }
-              td_ { "%.2f" % results[:flay] if results[:flay] }
+              td nbsp
+              td { text "%.2f" % results[:flog] if results[:flog] }
+              td nbsp
+              td { text "%.2f" % results[:flay] if results[:flay] }
             }
           end
         }
