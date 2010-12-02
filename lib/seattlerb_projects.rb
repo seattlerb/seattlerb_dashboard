@@ -89,11 +89,22 @@ class SeattlerbProjects
             drawr ograph ZenLibrary box_layout bfts rc-rest
             RailsRemoteControl yaccpuke ruby2smalltalk
             RubyInlineFortran ZenHacks zero2rails weight pkg_clean
-            cocor ar_mailer Cocoa
+            cocor ar_mailer Cocoa macports miniunit
             # if you won't write tests others can run, they won't get run.
             imap_processor gmail_contacts imap_to_rss
             macports
             ".gsub(/\s*\#.*/, '').scan(/\S+/)
+
+    # TODO: trying to remove these from the above
+    hold -= "
+              IMAPCleanse Inliner RailsRemoteControl RingyDingy
+              RubyAudit RubyInlineFortran Sphincter SyslogLogger UPnP
+              UPnP-ContentDirectory UPnP-IGD ZenHacks action_profiler
+              ar_mailer bfts box_layout cached_model cocor drawr
+              firebrigade_api imap_processor imap_to_rss mem_inspect
+              memcache-client metaruby rc-rest rdoc_osx_dictionary
+              ruby2smalltalk rbayes rubyholic tinderbox
+             ".scan(/\S+/)
 
     hold += layers.flatten
 
