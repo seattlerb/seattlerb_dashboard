@@ -92,7 +92,7 @@ class SeattlerbProjects
             cocor ar_mailer Cocoa
             # if you won't write tests others can run, they won't get run.
             imap_processor gmail_contacts imap_to_rss
-            macports osx_keychain
+            macports
             ".gsub(/\s*\#.*/, '').scan(/\S+/)
 
     hold += layers.flatten
