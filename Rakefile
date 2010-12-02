@@ -3,6 +3,8 @@
 require 'rubygems'
 require 'hoe'
 
+Hoe.plugin :seattlerb
+
 Hoe.spec 'seattlerb_dashboard' do
   developer('Ryan Davis', 'ryand-ruby@zenspider.com')
 
