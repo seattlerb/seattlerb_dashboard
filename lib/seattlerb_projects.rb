@@ -79,32 +79,17 @@ class SeattlerbProjects
              ]
 
     hold = "
-            Algometer AlgometerX metaruby Interpreters newri UNIX
-            IMAPCleanse Inliner RubyAudit RingyDingy Satori Sphincter
-            SyslogLogger UPnP UPnP-ContentDirectory UPnP-IGD
-            action_profiler cached_model firebrigade firebrigade_api
-            icanhasaudio mem_inspect memcache-client mogilefs-client
-            rubicon scripts rbayes rubyholic stuporslow tinderbox
-            seattlerb poopcode rdoc_osx_dictionary rubypan rometa
-            drawr ograph ZenLibrary box_layout bfts rc-rest
-            RailsRemoteControl yaccpuke ruby2smalltalk
-            RubyInlineFortran ZenHacks zero2rails weight pkg_clean
-            cocor ar_mailer Cocoa macports miniunit
-            # if you won't write tests others can run, they won't get run.
-            imap_processor gmail_contacts imap_to_rss
-            macports
-            ".gsub(/\s*\#.*/, '').scan(/\S+/)
+            # dead, untestable, non-ruby, or otherwise excluded
+            Algometer AlgometerX Interpreters newri UNIX Satori
+            firebrigade icanhasaudio mogilefs-client rubicon scripts
+            stuporslow seattlerb poopcode rubypan rometa ograph
+            ZenLibrary yaccpuke zero2rails weight pkg_clean Cocoa
+            macports miniunit macports
 
-    # TODO: trying to remove these from the above
-    hold -= "
-              IMAPCleanse Inliner RailsRemoteControl RingyDingy
-              RubyAudit RubyInlineFortran Sphincter SyslogLogger UPnP
-              UPnP-ContentDirectory UPnP-IGD ZenHacks action_profiler
-              ar_mailer bfts box_layout cached_model cocor drawr
-              firebrigade_api imap_processor imap_to_rss mem_inspect
-              memcache-client metaruby rc-rest rdoc_osx_dictionary
-              ruby2smalltalk rbayes rubyholic tinderbox
-             ".scan(/\S+/)
+            # if you won't write tests others can run, they won't get run.
+            gmail_contacts
+
+            ".gsub(/\s*\#.*/, '').scan(/\S+/)
 
     hold += layers.flatten
 
