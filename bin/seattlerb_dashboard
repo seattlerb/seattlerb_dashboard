@@ -175,7 +175,7 @@ File.open "#{dir}/index.html", 'w' do |f|
             results = status[proj]
             tr {
               th {
-                a(proj, :href => "#{proj}.txt")
+                a(proj, :href => "#{proj}.yaml")
               }
 
               td nbsp
