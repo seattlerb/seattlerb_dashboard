@@ -37,6 +37,13 @@ code = {
   false => "F",
 }
 
+release = {
+  "n/a" => "o",
+  nil   => "o",
+  true  => "Y",
+  false => "N",
+}
+
 up_to_date = {}
 
 puts "Project: #{versions.flatten}"
@@ -116,7 +123,7 @@ projs.each do |proj|
   results[:flog] = data[:flog] == 0 ? nil : data[:flog]
   results[:flay] = data[:flay] == 0 ? nil : data[:flay]
 
-  puts format % [proj, code[up_to_date[proj]], row, data[:flog], data[:flay]]
+  puts format % [proj, release[up_to_date[proj]], row, data[:flog], data[:flay]]
 end
 
 css = <<-EOM
