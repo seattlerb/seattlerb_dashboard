@@ -65,7 +65,7 @@ class SeattlerbProjects
 
               # base libraries
               %w(RubyInline sexp_processor),
-              %w(ParseTree ruby_parser ruby2ruby event_hook),
+              %w(ParseTree ruby_parser ruby2ruby event_hook rake-remote_task),
 
               # medium level - grouped by rough category
               %w(heckle flog flay vlad gauntlet),
@@ -84,10 +84,12 @@ class SeattlerbProjects
             firebrigade icanhasaudio mogilefs-client rubicon scripts
             stuporslow seattlerb poopcode rubypan rometa ograph
             ZenLibrary yaccpuke zero2rails weight pkg_clean Cocoa
-            macports miniunit macports
+            macports miniunit macports bastard_tetris zombies
 
             # if you won't write tests others can run, they won't get run.
-            gmail_contacts
+            gmail_contacts rc-rest UPnP UPnP-ContentDirectory
+            memcache-client Sphincter RailsRemoteControl imap_to_rss
+            imap_processor
 
             ".gsub(/\s*\#.*/, '').scan(/\S+/)
 
