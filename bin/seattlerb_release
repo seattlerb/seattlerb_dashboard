@@ -1,0 +1,35 @@
+#!/usr/bin/env ruby -ws
+
+require 'rubygems'
+require 'yaml'
+require 'seattlerb_projects'
+
+seattlerb = SeattlerbProjects.new
+projs     = seattlerb.projects.flatten
+
+seattlerb.chdir_src
+
+up_to_date = {}
+
+projs.each do |proj|
+  proj_dir = case proj
+        when /^rubyforge/ then
+          File.expand_path("~/Work/svn/codeforpeople/rubyforge/trunk")
+        else
+          "#{proj}/dev"
+        end
+
+  next unless File.directory? proj_dir
+
+  status = seattlerb.check_project(proj)
+
+  next if status
+
+  up_to_date[proj] = status
+end
+
+up_to_date.reject! { |k,v| v.nil? } if up_to_date.any? { |k,v| v == false }
+
+needs_update = projs & up_to_date.keys # maintains order this way
+
+puts needs_update.join(" ")
