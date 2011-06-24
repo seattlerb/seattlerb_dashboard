@@ -2,10 +2,10 @@
 
 $v ||= false
 $f ||= false
+$r ||= false
 
 require 'rubygems'
 require 'yaml'
-require 'erector'
 require 'seattlerb_projects'
 
 old_comma, $, = $,, ', '
@@ -18,17 +18,6 @@ status    = Hash.new { |h,k| h[k] = Hash.new { |h2,k2| h2[k2] = "n/a" } }
 versions  = Dir.chdir(File.expand_path("~/.multiruby/install")) { Dir["*"].sort}
 flog = {}
 flay = {}
-
-seattlerb.chdir_src
-
-color = {
-  "passed" => "#9F9",
-  true     => "#9F9",
-  "failed" => "#F99",
-  false    => "#66F",
-  "n/a"    => "#ccc",
-  nil      => "#ccc",
-}
 
 code = {
   "n/a" => "o",
@@ -43,6 +32,8 @@ release = {
   true  => "Y",
   false => "N",
 }
+
+seattlerb.chdir_src
 
 up_to_date = {}
 
@@ -147,6 +138,18 @@ puts "passed: #{total_passed} failed: #{total_failed}"
 
 $, = old_comma
 
+exit if $r
+
+color = {
+  "passed" => "#9F9",
+  true     => "#9F9",
+  "failed" => "#F99",
+  false    => "#66F",
+  "n/a"    => "#ccc",
+  nil      => "#ccc",
+}
+
+require 'erector'
 include Erector::Mixin
 
 File.open "#{dir}/index.html", 'w' do |f|
