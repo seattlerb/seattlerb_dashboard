@@ -55,8 +55,6 @@ class SeattlerbProjects
   end
 
   def projects
-    chdir_src
-
     layers = [ # mix of dependencies and priorities
 
               # most important: the foundation
@@ -64,7 +62,7 @@ class SeattlerbProjects
               %w(ZenTest minitest minitest_tu_shim autotest-rails),
 
               # base libraries
-              %w(RubyInline sexp_processor),
+              %w(RubyInline sexp_processor ssh),
               %w(ParseTree ruby_parser ruby2ruby event_hook rake-remote_task),
 
               # medium level - grouped by rough category
