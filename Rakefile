@@ -13,7 +13,6 @@ Hoe.spec 'seattlerb_dashboard' do
   self.rubyforge_name = 'seattlerb'
 end
 
-# ENV["GEM_HOME"] = File.expand_path "tmp"
 ENV["GEM_PATH"] = File.expand_path "tmp"
 ENV["PATH"]     = File.expand_path("tmp/bin:") + ENV["PATH"]
 
@@ -37,13 +36,20 @@ task :sync do
   Dir.chdir File.expand_path("~/Sites") do
     sh "./sync.sh"
   end
-  sh "open http://www.zenspider.com/~ryand/dashboard/"
+  sh "open -g http://www.zenspider.com/~ryand/dashboard/"
 end
 
 desc "Clean up dashboard and start over"
 task :purge do
   Dir.chdir File.expand_path("~/Sites/dashboard") do
     rm Dir["*.{txt,yaml}"]
+  end
+end
+
+desc "Clean up dashboard and start over"
+task :force do
+  Dir.chdir File.expand_path("~/Sites/dashboard") do
+    rm `egrep -l 'Failure|Error' *.yaml`.lines.map(&:chomp)
   end
 end
 

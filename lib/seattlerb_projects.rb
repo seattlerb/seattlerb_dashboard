@@ -1,4 +1,3 @@
-
 class SeattlerbProjects
 
   ##
@@ -11,7 +10,7 @@ class SeattlerbProjects
       if ver.empty? then
         nil
       else
-        ! system "diff -rq #{ver.last} dev | grep -q differ$"
+        ! system "p4 diff2 -u #{ver.last}/... dev/... | grep -q ."
       end
     end
   end
@@ -59,21 +58,25 @@ class SeattlerbProjects
 
               # most important: the foundation
               %w(hoe hoe-seattlerb),
-              %w(ZenTest minitest minitest_tu_shim autotest-rails),
+              %w(ZenTest minitest autotest-rails),
 
               # base libraries
-              %w(RubyInline sexp_processor ssh),
-              %w(ParseTree ruby_parser ruby2ruby event_hook rake-remote_task),
+              %w(RubyInline sexp_processor),
+              %w(ruby_parser ruby2ruby event_hook),
 
               # medium level - grouped by rough category
-              %w(heckle flog flay vlad gauntlet),
-              %w(ruby_to_c zenprofile wilson),
-              %w(image_science png),
+              %w(heckle flog flay gauntlet ssh),
+              %w(ruby_to_c zenprofile wilson rake-remote_task),
+              %w(image_science png graph vlad),
+              %w(ZenWeb),
 
               # toys and soon to be more "serious"
               %w(UPnP-ConnectionManager UPnP-MediaServer),
               %w(rails_analyzer_tools production_log_analyzer),
-              %w(graph ZenWeb ZenGraph),
+              %w(ZenGraph),
+
+              # things I'm phasing out
+              %w(minitest_tu_shim ParseTree),
              ]
 
     hold = "
@@ -83,6 +86,8 @@ class SeattlerbProjects
             stuporslow seattlerb poopcode rubypan rometa ograph
             ZenLibrary yaccpuke zero2rails weight pkg_clean Cocoa
             macports miniunit macports bastard_tetris zombies
+
+            noms
 
             # if you won't write tests others can run, they won't get run.
             gmail_contacts rc-rest UPnP UPnP-ContentDirectory
