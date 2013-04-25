@@ -71,9 +71,6 @@ class SeattlerbProjects
               %w(ZenWeb),
 
               # toys and soon to be more "serious"
-              %w(UPnP-ConnectionManager UPnP-MediaServer),
-              %w(rails_analyzer_tools production_log_analyzer),
-              %w(ZenGraph),
 
               # things I'm phasing out
               %w(minitest_tu_shim ParseTree),
@@ -89,10 +86,25 @@ class SeattlerbProjects
 
             noms
 
+            # my oooold crap
+            ZenGraph RubyAudit cocor
+
             # if you won't write tests others can run, they won't get run.
             gmail_contacts rc-rest UPnP UPnP-ContentDirectory
             memcache-client Sphincter RailsRemoteControl imap_to_rss
             imap_processor
+            UPnP-ConnectionManager UPnP-MediaServer
+            rails_analyzer_tools production_log_analyzer
+
+            # eric's abandonware
+            IMAPCleanse Inliner RailsRemoteControl RingyDingy
+            Sphincter SuperCaller SyslogLogger UPnP-ConnectionManager
+            UPnP-ContentDirectory UPnP-IGD UPnP-MediaServer UPnP
+            ZenCallGraph action_profiler ar_mailer cached_model
+            firebrigade_api gmail_contacts imap_to_rss mem_inspect
+            memcache-client mogilefs-client orca_card
+            production_log_analyzer rails_analyzer_tools rbayes
+            rc-rest rubygems-isit19 rubypan smtp_tls tinderbox
 
             ".gsub(/\s*\#.*/, '').scan(/\S+/)
 
