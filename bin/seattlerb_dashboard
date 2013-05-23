@@ -8,6 +8,48 @@ require 'rubygems'
 require 'yaml'
 require 'seattlerb_projects'
 
+def color val, type = :test
+  return unless val
+
+  h = {
+       "passed" => "#9F9",
+       true     => "#9F9",
+       "failed" => "#F99",
+       false    => "#66F",
+       "n/a"    => "#ccc",
+       nil      => "#ccc",
+       "warn"   => "#FF6",
+      }
+
+  first = second = 0
+  a, b, c = %w(passed warn failed)
+
+  case type
+  when :test, :rel then
+    c = h[val]
+    return c if c
+    raise "unknown type"
+  when :flay then
+    first, second = 250, 1000
+  when :flog then
+    first, second = 15, 20
+  when :dcov then
+    first, second = 50, 80
+    a, c = c, a
+  else
+    raise "unknown type"
+  end
+
+  n = Float(val)
+  if n <= first then
+    h[a]
+  elsif n <= second then
+    h[b]
+  else
+    h[c]
+  end
+end
+
 old_comma, $, = $,, ', '
 
 total_passed = total_failed = 0
@@ -43,7 +85,7 @@ dir = ARGV.shift || File.expand_path("~/Sites/dashboard")
 
 Dir.mkdir dir unless File.exist? dir
 
-format = "%-#{projs.map { |s| s.size }.max}s : %s : %s : %8.2f : %8.2f"
+format = "%-#{projs.map { |s| s.size }.max}s : %s : %s : %8.2f : %8.2f : %8.2f"
 
 $cache_stale = false
 def cache_against_dir_mtimes cache_path, dir
@@ -80,6 +122,10 @@ projs.each do |proj|
 
   next unless File.directory? proj_dir
 
+  unless File.exist? File.join(proj_dir, "Rakefile") then
+    warn "No rakefile: #{proj}"
+  end
+
   ENV['VERSIONS'] = versions.join(':')
 
   data = cache_against_dir_mtimes "#{dir}/#{proj}.yaml", proj_dir do
@@ -87,8 +133,9 @@ projs.each do |proj|
     dirs = "." if dirs.empty?
     {
       :test => `rake -qt clean multi 2>&1`,
-      :flog => `flog -s -q -c #{dirs} | head -1`[/\d+(\.\d+)?/].to_f,
+      :flog => `flog -s -q -c #{dirs} | tail -1`[/\d+(\.\d+)?/].to_f,
       :flay => `flay -s #{dirs} | head -1`[/\d+(\.\d+)?/].to_f,
+      :dcov => `rake -s dcov 2> /dev/null`[/(\d+(?:\.\d+)?)% documented/, 1].to_f,
     }
   end
 
@@ -113,8 +160,11 @@ projs.each do |proj|
   up_to_date[proj] = seattlerb.check_project(proj)
   results[:flog] = data[:flog] == 0 ? nil : data[:flog]
   results[:flay] = data[:flay] == 0 ? nil : data[:flay]
+  results[:dcov] = data[:dcov]
 
-  puts format % [proj, release[up_to_date[proj]], row, data[:flog], data[:flay]]
+  puts format % [proj, release[up_to_date[proj]],
+                 row,
+                 data[:flog], data[:flay], data[:dcov]]
 end
 
 css = <<-EOM
@@ -139,15 +189,6 @@ puts "passed: #{total_passed} failed: #{total_failed}"
 $, = old_comma
 
 exit if $r
-
-color = {
-  "passed" => "#9F9",
-  true     => "#9F9",
-  "failed" => "#F99",
-  false    => "#66F",
-  "n/a"    => "#ccc",
-  nil      => "#ccc",
-}
 
 require 'erector'
 include Erector::Mixin
@@ -177,9 +218,11 @@ File.open "#{dir}/index.html", 'w' do |f|
               th { div v, :class => :rot }
             end
             th nbsp
-            th { div "flog", :class => :rot }
+            th { div "flog/meth", :class => :rot }
             th nbsp
             th { div "flay", :class => :rot }
+            th nbsp
+            th { div "dcov", :class => :rot }
           }
           projs.each do |proj|
             results = status[proj]
@@ -190,20 +233,30 @@ File.open "#{dir}/index.html", 'w' do |f|
 
               td nbsp
 
-              td("", :style => "background: #{color[up_to_date[proj]]}")
+              td("", :style => "background: #{color(up_to_date[proj], :rel)}")
 
               td nbsp
 
               versions.each do |version|
                 r = results[version] || "failed"
                 r = "passed" if r == true
-                td("", :style => "background: #{color[r]}")
+                td("", :style => "background: #{color(r)}")
               end
 
               td nbsp
-              td { text "%.2f" % results[:flog] if results[:flog] }
+              td(:style => "background: #{color(results[:flog], :flog)}") {
+                text "%.2f" % results[:flog] if results[:flog]
+              }
+
               td nbsp
-              td { text "%.2f" % results[:flay] if results[:flay] }
+              td(:style => "background: #{color(results[:flay], :flay)}") {
+                text "%.2f" % results[:flay] if results[:flay]
+              }
+
+              td nbsp
+              td(:style => "background: #{color(results[:dcov], :dcov)}") {
+                text "%.2f" % results[:dcov] if results[:dcov]
+              }
             }
           end
         }

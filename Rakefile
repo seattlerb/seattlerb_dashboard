@@ -13,6 +13,7 @@ Hoe.spec 'seattlerb_dashboard' do
   self.rubyforge_name = 'seattlerb'
 end
 
+ENV["MT_NO_ISOLATE"] = "1"
 ENV["GEM_PATH"] = File.expand_path "tmp"
 ENV["PATH"]     = File.expand_path("tmp/bin:") + ENV["PATH"]
 
