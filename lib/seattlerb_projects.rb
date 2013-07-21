@@ -68,7 +68,7 @@ class SeattlerbProjects
               %w(heckle flog flay gauntlet ssh),
               %w(ruby_to_c zenprofile wilson rake-remote_task),
               %w(image_science png graph vlad),
-              %w(ZenWeb),
+              %w(ZenWeb ohmygems),
 
               # toys and soon to be more "serious"
 
