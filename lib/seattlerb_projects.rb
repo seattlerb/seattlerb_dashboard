@@ -31,7 +31,7 @@ class SeattlerbProjects
       files = File.read("Manifest.txt").split(/\n/)
       files.each do |file|
         begin
-          version = File.read(file)[/VERSION = ([\"\'])([\d][\d\w\.]+)\1/, 2]
+          version = File.read(file)[/VERSION = ([\"\'])([\d][\da-z\.]+)\1/, 2]
           break if version
         rescue
           # ignore it

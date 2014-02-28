@@ -58,8 +58,6 @@ seattlerb = SeattlerbProjects.new
 projs     = seattlerb.projects.flatten
 status    = Hash.new { |h,k| h[k] = Hash.new { |h2,k2| h2[k2] = "n/a" } }
 versions  = Dir.chdir(File.expand_path("~/.multiruby/install")) { Dir["*"].sort}
-flog = {}
-flay = {}
 
 code = {
   "n/a" => "o",
@@ -79,7 +77,10 @@ seattlerb.chdir_src
 
 up_to_date = {}
 
-puts "Project: #{versions.flatten}"
+format = "%-#{projs.map { |s| s.size }.max}s :%s: %s: %8s : %8s : %8s"
+puts "Versions = #{versions.flatten.join " "}"
+puts format % %w[Project rel versions flog flay dcov]
+puts "-" * 78
 
 dir = ARGV.shift || File.expand_path("~/Sites/dashboard")
 
@@ -89,7 +90,7 @@ format = "%-#{projs.map { |s| s.size }.max}s : %s : %s : %8.2f : %8.2f : %8.2f"
 
 $cache_stale = false
 def cache_against_dir_mtimes cache_path, dir
-  next unless File.directory? dir
+  return unless File.directory? dir
   Dir.chdir dir do
     cache_mtime = File.mtime(cache_path) rescue Time.at(0)
     dir_mtime = Dir["**"].map { |f| File.mtime f if File.exist? f }.compact.max
@@ -163,7 +164,7 @@ projs.each do |proj|
   results[:dcov] = data[:dcov]
 
   puts format % [proj, release[up_to_date[proj]],
-                 row,
+                 row.join(" "),
                  data[:flog], data[:flay], data[:dcov]]
 end
 
