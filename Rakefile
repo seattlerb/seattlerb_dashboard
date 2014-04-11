@@ -9,8 +9,6 @@ Hoe.spec 'seattlerb_dashboard' do
   developer('Ryan Davis', 'ryand-ruby@zenspider.com')
 
   dependency "erector", "~> 0.8.2"
-
-  self.rubyforge_name = 'seattlerb'
 end
 
 ENV["MT_NO_ISOLATE"] = "1"
