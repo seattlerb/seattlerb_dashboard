@@ -96,6 +96,9 @@ class SeattlerbProjects
             UPnP-ConnectionManager UPnP-MediaServer
             rails_analyzer_tools production_log_analyzer
 
+            # non-traditional project structures
+            fitbit autotest bfts metaruby seattlerb_dashboard
+
             # eric's abandonware
             IMAPCleanse Inliner RailsRemoteControl RingyDingy
             Sphincter SuperCaller SyslogLogger UPnP-ConnectionManager
@@ -118,9 +121,6 @@ class SeattlerbProjects
       }.sort_by { |d| -File.mtime(d).to_i }
     end
 
-    layers.last << layers.last.delete("seattlerb_dashboard")
-
     layers
   end
 end
-
