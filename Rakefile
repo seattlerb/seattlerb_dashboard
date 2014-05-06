@@ -53,7 +53,7 @@ task :force do
 end
 
 task :gems do
-  sh "gem i -i tmp erector flog flay --no-ri --no-rdoc"
+  sh "gem i -i tmp tagz flog flay -N"
 end
 
 # vim: syntax=ruby

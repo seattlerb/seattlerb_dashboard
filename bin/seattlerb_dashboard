@@ -93,9 +93,9 @@ def cache_against_dir_mtimes cache_path, dir
   return unless File.directory? dir
   Dir.chdir dir do
     cache_mtime = File.mtime(cache_path) rescue Time.at(0)
-    dir_mtime = Dir["**"].map { |f| File.mtime f if File.exist? f }.compact.max
+    dir_mtime = Dir["{lib,test}/**/*"].map { |f| File.mtime f if File.exist? f }.compact.max
 
-    if $cache_stale || cache_mtime < dir_mtime then
+    if $cache_stale || dir_mtime.nil? || cache_mtime < dir_mtime then
       $cache_stale = !$f
       data = yield
 
@@ -191,72 +191,76 @@ $, = old_comma
 
 exit if $r
 
-require 'erector'
-include Erector::Mixin
+require 'tagz'
+include Tagz
+
+Tagz.html_mode!
 
 File.open "#{dir}/index.html", 'w' do |f|
-  f.puts erector(:prettyprint => true) {
-    raw %(<!D\OCTYPE html PUBLIC "-//W3C//DTD HTML 3.2//EN">)
-    html {
-      head {
-        title { "Project Status Report #{Time.now.strftime("%Y-%m-%d %H:%M")}"}
-        style raw(css), :type=>"text/css"
+  f.puts tagz {
+    nbsp = Tagz.raw "&nbsp;"
+
+    Tagz.raw %(<!D\OCTYPE html PUBLIC "-//W3C//DTD HTML 3.2//EN">) +
+    html_ {
+      head_ {
+        title_ { "Project Status Report #{Time.now.strftime("%Y-%m-%d")}"}
+        style_ Tagz.raw(css), :type=>"text/css"
       }
-      body {
-        table {
-          tr(:id => :top) {
-            td {
-              table(:style => "border: 1px solid black; padding: 2px;") {
-                tr { td "Packages:"; td projs.size }
-                tr { td "Releases:"; td Dir["*/[0-9]*"].size }
-                tr { td "Commits:";  td `p4 counter change` }
+      body_ {
+        table_ {
+          tr_(:id => :top) {
+            td_ {
+              table_(:style => "border: 1px solid black; padding: 2px;") {
+                tr_ { td_ "Packages:"; td_ projs.size }
+                tr_ { td_ "Releases:"; td_ Dir["*/[0-9]*"].size }
+                tr_ { td_ "Commits:";  td_ `p4 counter change` }
               }
             }
-            th nbsp
-            th { div "released\?", :class => :rot }
-            th nbsp
+            th_ nbsp
+            th_ { div_ "released\?", :class => :rot }
+            th_ nbsp
             versions.each do |v|
-              th { div v, :class => :rot }
+              th_ { div_ v, :class => :rot }
             end
-            th nbsp
-            th { div "flog/meth", :class => :rot }
-            th nbsp
-            th { div "flay", :class => :rot }
-            th nbsp
-            th { div "dcov", :class => :rot }
+            th_ nbsp
+            th_ { div_ "flog/meth", :class => :rot }
+            th_ nbsp
+            th_ { div_ "flay", :class => :rot }
+            th_ nbsp
+            th_ { div_ "dcov", :class => :rot }
           }
           projs.each do |proj|
             results = status[proj]
-            tr {
-              th {
-                a(proj, :href => "#{proj}.yaml")
+            tr_ {
+              th_ {
+                a_(proj, :href => "#{proj}.yaml")
               }
 
-              td nbsp
+              td_ nbsp
 
-              td("", :style => "background: #{color(up_to_date[proj], :rel)}")
+              td_("", :style => "background: #{color(up_to_date[proj], :rel)}")
 
-              td nbsp
+              td_ nbsp
 
               versions.each do |version|
                 r = results[version] || "failed"
                 r = "passed" if r == true
-                td("", :style => "background: #{color(r)}")
+                td_("", :style => "background: #{color(r)}")
               end
 
-              td nbsp
-              td(:style => "background: #{color(results[:flog], :flog)}") {
-                text "%.2f" % results[:flog] if results[:flog]
+              td_ nbsp
+              td_(:style => "background: #{color(results[:flog], :flog)}") {
+                Tagz.h "%.2f" % results[:flog] if results[:flog]
               }
 
-              td nbsp
-              td(:style => "background: #{color(results[:flay], :flay)}") {
-                text "%.2f" % results[:flay] if results[:flay]
+              td_ nbsp
+              td_(:style => "background: #{color(results[:flay], :flay)}") {
+                Tagz.h "%.2f" % results[:flay] if results[:flay]
               }
 
-              td nbsp
-              td(:style => "background: #{color(results[:dcov], :dcov)}") {
-                text "%.2f" % results[:dcov] if results[:dcov]
+              td_ nbsp
+              td_(:style => "background: #{color(results[:dcov], :dcov)}") {
+                Tagz.h "%.2f" % results[:dcov] if results[:dcov]
               }
             }
           end
