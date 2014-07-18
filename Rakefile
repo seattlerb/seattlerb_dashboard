@@ -8,7 +8,9 @@ Hoe.plugin :seattlerb
 Hoe.spec 'seattlerb_dashboard' do
   developer('Ryan Davis', 'ryand-ruby@zenspider.com')
 
-  dependency "erector", "~> 0.8.2"
+  dependency "flog", "> 0"
+  dependency "flay", "> 0"
+  dependency "tagz", "> 0"
 end
 
 ENV["MT_NO_ISOLATE"] = "1"
