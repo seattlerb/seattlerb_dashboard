@@ -62,18 +62,29 @@ class SeattlerbProjects
 
               # base libraries
               %w(RubyInline sexp_processor),
-              %w(ruby_parser ruby2ruby event_hook),
+              %w(ruby_parser oedipus_lex ruby2ruby event_hook),
 
               # medium level - grouped by rough category
-              %w(heckle flog flay gauntlet ssh),
+              %w(flog flay gauntlet ssh flay-persistence),
               %w(ruby_to_c zenprofile wilson rake-remote_task),
-              %w(image_science png graph vlad),
-              %w(ZenWeb ohmygems),
+              %w(image_science png graph vlad vlad-perforce),
+              %w(ZenWeb zenweb-template ohmygems makerakeworkwell),
+
+              %w(omnifocus omnifocus-bugzilla omnifocus-github
+                 omnifocus-redmine omnifocus-rt omnifocus-rubyforge),
+
+              %w(minitest-autotest minitest-bisect minitest-gcstats
+                 minitest-server minitest-unordered minitest-bacon
+                 minitest-focus minitest-debugger minitest-happy
+                 minitest-macruby minitest-excludes),
 
               # toys and soon to be more "serious"
 
+              %w(osx_keychain rubygems-cleanroom rubygems-sandbox
+                 rubygems-checkcert rubygems-sing rdoc_osx_dictionary),
+
               # things I'm phasing out
-              %w(minitest_tu_shim ParseTree),
+              %w(),
              ]
 
     hold = "
@@ -83,6 +94,13 @@ class SeattlerbProjects
             stuporslow seattlerb poopcode rubypan rometa ograph
             ZenLibrary yaccpuke zero2rails weight pkg_clean Cocoa
             macports miniunit macports bastard_tetris zombies
+            minitest_bench
+
+            # if pete and I ever get off our butts
+            heckle
+
+            # EOL'd
+            minitest_tu_shim ParseTree
 
             noms
 
@@ -95,6 +113,9 @@ class SeattlerbProjects
             imap_processor
             UPnP-ConnectionManager UPnP-MediaServer
             rails_analyzer_tools production_log_analyzer
+
+            ZenHacks autotest-screen change_class un yoda drawr
+            box_layout RubyInlineFortran
 
             # non-traditional project structures
             fitbit autotest bfts metaruby seattlerb_dashboard
@@ -110,6 +131,10 @@ class SeattlerbProjects
             rc-rest rubygems-isit19 rubypan smtp_tls tinderbox
 
             ".gsub(/\s*\#.*/, '').scan(/\S+/)
+
+    overlap = hold & layers.flatten
+
+    p :overlap => overlap unless overlap.empty?
 
     hold += layers.flatten
 
