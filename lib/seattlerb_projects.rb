@@ -65,18 +65,21 @@ class SeattlerbProjects
               %w(ruby_parser oedipus_lex ruby2ruby event_hook),
 
               # medium level - grouped by rough category
-              %w(flog flay gauntlet ssh flay-persistence),
-              %w(ruby_to_c zenprofile wilson rake-remote_task),
-              %w(image_science png graph vlad vlad-perforce),
-              %w(ZenWeb zenweb-template ohmygems makerakeworkwell),
-
-              %w(omnifocus omnifocus-bugzilla omnifocus-github
-                 omnifocus-redmine omnifocus-rt omnifocus-rubyforge),
+              %w(flog flay flay-persistence),
 
               %w(minitest-autotest minitest-bisect minitest-gcstats
                  minitest-server minitest-unordered minitest-bacon
                  minitest-focus minitest-debugger minitest-happy
                  minitest-macruby minitest-excludes),
+
+              %w(image_science png graph),
+              %w(vlad vlad-perforce rake-remote_task),
+              %w(ZenWeb zenweb-template ohmygems makerakeworkwell),
+
+              %w(omnifocus omnifocus-bugzilla omnifocus-github
+                 omnifocus-redmine omnifocus-rt omnifocus-rubyforge),
+
+              %w(gauntlet ssh ruby_to_c zenprofile wilson),
 
               # toys and soon to be more "serious"
 

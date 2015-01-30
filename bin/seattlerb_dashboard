@@ -4,6 +4,8 @@ $v ||= false
 $f ||= false
 $r ||= false
 
+ENV["MT_NO_ISOLATE"] = "1"
+
 require 'rubygems'
 require 'yaml'
 require 'seattlerb_projects'
@@ -57,7 +59,7 @@ total_passed = total_failed = 0
 seattlerb = SeattlerbProjects.new
 projs     = seattlerb.projects.flatten
 status    = Hash.new { |h,k| h[k] = Hash.new { |h2,k2| h2[k2] = "n/a" } }
-versions  = Dir.chdir(File.expand_path("~/.multiruby/install")) { Dir["*"].sort}
+versions  = Dir.chdir(File.expand_path("~/.rbenv/versions")) { Dir["*"].sort } - %w[maglev]
 
 code = {
   "n/a" => "o",
