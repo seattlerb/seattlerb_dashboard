@@ -62,7 +62,7 @@ class SeattlerbProjects
 
               # base libraries
               %w(RubyInline sexp_processor),
-              %w(ruby_parser oedipus_lex ruby2ruby event_hook),
+              %w(ruby_parser oedipus_lex ruby2ruby),
 
               # medium level - grouped by rough category
               %w(flog flay flay-persistence),
@@ -79,7 +79,7 @@ class SeattlerbProjects
               %w(omnifocus omnifocus-bugzilla omnifocus-github
                  omnifocus-redmine omnifocus-rt omnifocus-rubyforge),
 
-              %w(gauntlet ssh ruby_to_c zenprofile wilson),
+              %w(gauntlet ssh ruby_to_c wilson),
 
               # toys and soon to be more "serious"
 
@@ -87,7 +87,7 @@ class SeattlerbProjects
                  rubygems-checkcert rubygems-sing rdoc_osx_dictionary),
 
               # things I'm phasing out
-              %w(),
+              %w(event_hook zenprofile),
              ]
 
     hold = "
