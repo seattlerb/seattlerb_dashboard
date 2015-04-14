@@ -25,7 +25,9 @@ task :run do
 end
 
 task :triage do
-  ruby "./shipit > TODO_releases.txt"
+  ruby "./shipit > TODO_releases.tmp"
+  puts
+  mv "TODO_releases.tmp", "TODO_releases.txt"
   puts File.read "TODO_releases.txt"
 end
 
