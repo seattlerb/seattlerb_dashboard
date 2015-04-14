@@ -65,12 +65,16 @@ class SeattlerbProjects
               %w(ruby_parser oedipus_lex ruby2ruby),
 
               # medium level - grouped by rough category
-              %w(flog flay flay-persistence debride debride-erb),
+              %w(flog flay debride),
 
+              # medium level - minitest plugins
               %w(minitest-autotest minitest-bisect minitest-gcstats
                  minitest-server minitest-unordered minitest-bacon
                  minitest-focus minitest-debugger minitest-happy
                  minitest-macruby minitest-excludes minitest-sprint),
+
+              # medium level - flog/flay/other plugins
+              %w(flay-persistence debride-erb),
 
               %w(image_science png graph),
               %w(vlad vlad-perforce rake-remote_task),
