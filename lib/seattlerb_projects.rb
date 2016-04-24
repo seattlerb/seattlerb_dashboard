@@ -71,7 +71,9 @@ class SeattlerbProjects
               %w(minitest-autotest minitest-bisect minitest-gcstats
                  minitest-server minitest-unordered minitest-bacon
                  minitest-focus minitest-debugger minitest-happy
-                 minitest-macruby minitest-excludes minitest-sprint),
+                 minitest-macruby minitest-excludes minitest-sprint
+                 minitest-speed
+              ),
 
               # medium level - flog/flay/other plugins
               %w(flay-persistence debride-erb),
