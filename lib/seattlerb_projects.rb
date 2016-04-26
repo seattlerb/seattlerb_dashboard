@@ -77,7 +77,7 @@ class SeattlerbProjects
 
               %w[
                autotest bacon bisect debugger excludes focus
-               gcstats happy macruby server speed sprint unordered
+               gcstats happy macruby proveit server speed sprint unordered
               ].prefix("minitest"),
 
               # medium level - flog/flay/other plugins
