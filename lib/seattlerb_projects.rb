@@ -78,7 +78,7 @@ class SeattlerbProjects
               %w[
                autotest bacon bisect debugger excludes focus
                gcstats happy macruby server speed sprint unordered
-              ].prefix "minitest"
+              ].prefix("minitest"),
 
               # medium level - flog/flay/other plugins
               %w(flay-persistence debride-erb),
@@ -90,13 +90,13 @@ class SeattlerbProjects
               %w(omnifocus) +
                 %w[
                  bugzilla github redmine rt rubyforge
-                ].prefix "omnifocus",
+                ].prefix("omnifocus"),
 
               %w(gauntlet ssh ruby_to_c wilson),
 
               # toys and soon to be more "serious"
 
-              %w[cleanroom sandbox checkcert sing].prefix "rubygems"
+              %w[cleanroom sandbox checkcert sing].prefix("rubygems"),
               %w(osx_keychain rdoc_osx_dictionary),
 
               # things I'm phasing out
