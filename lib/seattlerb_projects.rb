@@ -1,3 +1,9 @@
+class Array
+  def prefix prefix
+    map { |s| "#{prefix}-#{s}" }
+  end
+end
+
 class SeattlerbProjects
 
   ##
@@ -68,12 +74,11 @@ class SeattlerbProjects
               %w(flog flay debride),
 
               # medium level - minitest plugins
-              %w(minitest-autotest minitest-bisect minitest-gcstats
-                 minitest-server minitest-unordered minitest-bacon
-                 minitest-focus minitest-debugger minitest-happy
-                 minitest-macruby minitest-excludes minitest-sprint
-                 minitest-speed
-              ),
+
+              %w[
+               autotest bacon bisect debugger excludes focus
+               gcstats happy macruby server speed sprint unordered
+              ].prefix "minitest"
 
               # medium level - flog/flay/other plugins
               %w(flay-persistence debride-erb),
@@ -82,15 +87,17 @@ class SeattlerbProjects
               %w(vlad vlad-perforce rake-remote_task),
               %w(ZenWeb zenweb-template ohmygems makerakeworkwell),
 
-              %w(omnifocus omnifocus-bugzilla omnifocus-github
-                 omnifocus-redmine omnifocus-rt omnifocus-rubyforge),
+              %w(omnifocus) +
+                %w[
+                 bugzilla github redmine rt rubyforge
+                ].prefix "omnifocus",
 
               %w(gauntlet ssh ruby_to_c wilson),
 
               # toys and soon to be more "serious"
 
-              %w(osx_keychain rubygems-cleanroom rubygems-sandbox
-                 rubygems-checkcert rubygems-sing rdoc_osx_dictionary),
+              %w[cleanroom sandbox checkcert sing].prefix "rubygems"
+              %w(osx_keychain rdoc_osx_dictionary),
 
               # things I'm phasing out
               %w(event_hook zenprofile),
